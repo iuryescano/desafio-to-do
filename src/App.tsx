@@ -1,96 +1,109 @@
-import './global.css'
-import { Header } from './components/Header'
-import styles from './components/Auxiles.module.css'
-import { useState, ChangeEvent} from 'react';
-import { AiOutlinePlusCircle } from 'react-icons/ai'; 
-import  Atividade  from './components/atividade';
-import { ITask } from './Interfaces';
+import "./global.css";
+import { Header } from "./components/Header";
+import styles from "./components/Auxiles.module.css";
+import { useState, ChangeEvent } from "react";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import Atividade from "./components/atividade";
+import { ITask } from "./Interfaces";
+
 
 function App() {
-
-  const [ tasks, setTasks ] = useState<string>("")
-  const [ todo, setTodoList ] = useState<ITask[]>([]);
-  const [ contarTasks, setContarTaskList ] = useState<number>(0);
-
+  const [tasks, setTasks] = useState<string>("");
+  const [todo, setTodoList] = useState<ITask[]>([]);
+  const [contarTasks, setContarTaskList] = useState<number>(0);
+  const [ progresso, setProgresso ] = useState<number>(0);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTasks(event.target.value)
+    setTasks(event.target.value);
   };
 
-  const addTask = (): void => {
-    const newTask = {taskName: tasks};
-    setTodoList([...todo, newTask]);
+  const handleQuantidade = (todo.filter((item: any) => item.checked === true).length);
+
+
+  const addTask = (taskName: string): void => {
+    const newTask = [...todo];
+    newTask.push({
+      identify: todo.length + 1,
+      taskName: taskName,
+      checked: false,
+    });
+    console.log(todo);
+    setTodoList(newTask);
+
     setTasks("");
     setContarTaskList(contarTasks + 1);
-    console.log(newTask);
-  }; 
+  };
 
-  const deleteTask = (taskNameToDelete : string): void => {
-    setTodoList(todo.filter((tasks) => {
-      return tasks.taskName != taskNameToDelete
-    }))
+  const deleteTask = (taskNameToDelete: number): void => {
+    const newArray = todo.filter((todo) => todo.identify != taskNameToDelete);
+    setTodoList(newArray);
     setContarTaskList(contarTasks - 1);
+  };
 
-  }
+  const [inputText, setInputText] = useState("");
+
+  const handleClick = () => {
+    addTask(inputText);
+  };
+
+   const updateTask = (identify: number) => {
+    setTodoList(
+      todo.map((item: any) => {
+        if (item.identify === identify) {
+          item.checked = !item.checked;
+        }
+        return item;
+      })
+    )
+  } 
 
   return (
-    <div >
-      <Header/>
+    <div>
+      <Header />
       <main>
         <div className={styles.separator}>
-          <input className={styles.input} onChange={handleChange} value={tasks} autoFocus placeholder='Adicione uma nova tarefa'/>
-          <button className={styles.button} type="submit" onClick={addTask}>
+          <input
+            className={styles.input}
+            onChange={(e) => setInputText(e.target.value)}
+            /*  value={tasks} */ autoFocus
+            placeholder='Adicione uma nova tarefa'
+          />
+          <button className={styles.button} type='submit' onClick={handleClick}>
             Criar
-            <AiOutlinePlusCircle size={20}className={styles.buttonIcon}/>
+            <AiOutlinePlusCircle size={20} className={styles.buttonIcon} />
           </button>
         </div>
-        
+
         <div className={styles.backBar}>
           <div className={styles.backBarFlex}>
             <p>Tarefas criadas</p>
-            <span>{contarTasks}</span> 
+            <span>{contarTasks}</span>
           </div>
-          
-                    
 
           <div className={styles.backBarFlex}>
             <p>Atividades Completadas</p>
-            <span>1 de 10</span>
+            <span>{handleQuantidade} de 10</span> 
           </div>
-          
-
         </div>
-
 
         <div>
-          {todo.map((tasks: ITask, key:number) => {
+          {todo.map((tasks: ITask, key: number) => {
             return (
               <div className={styles.list}>
-                <Atividade key={key} tasks={tasks} deleteTask={deleteTask}></Atividade>
+                <Atividade
+                  key={key}
+                  tasks={tasks}
+                  deleteTask={deleteTask}
+                  updateTask={updateTask}
+                  checked={tasks.checked}></Atividade>
               </div>
-            )
+            );
           })}
         </div>
-        
 
-
-{/*         <div>
-          <div className={styles.content}>
-            <img src={Clipboard} alt='teste'/>
-            
-          </div>
-          <div className={styles.content2}>
-            Você ainda não tem tarefas cadastradas <br/>
-            Crie tarefas e organize seus itens a fazer
-          </div>
-        </div>
- */}
       </main>
     </div>
-  )
-
-
+  );
 }
 
-export default App
-
+export default App;

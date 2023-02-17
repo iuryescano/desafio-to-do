@@ -1,42 +1,47 @@
-import styles from './atividade.module.css';
-import { TbTrash } from 'react-icons/tb';
-import { ITask } from '../../Interfaces';
+import styles from "./atividade.module.css";
+import { TbTrash } from "react-icons/tb";
+import { ITask } from "../../Interfaces";
+import { useState } from "react";
 
 interface Props {
   tasks: ITask;
-  deleteTask(taskNameToDelete: string): void;
+  deleteTask(taskNameToDelete: number): void; 
+  updateTask(taskNameToUpdate: number): void; 
+  checked : boolean;
 }
 
- const Atividade = ({tasks, deleteTask}: Props) =>{
+
+const Atividade = ({ tasks, deleteTask, updateTask, checked }: Props) => {
   return (
     <section className={styles.atividades}>
-    <header className={styles.header}>
+      <header className={styles.header}></header>
 
-    </header>
+        <div className={styles.task}>
+          
+          <div className={styles.roundTop}>
+            <div className={styles.round}>
+                <input type="checkbox" checked={checked} id="checkbox"/>
+                <label htmlFor="checkbox" onClick={() => { updateTask(tasks.identify) }}></label>
+                
+            </div>
+          </div>
 
-    <div className={styles.list} >
+          <span className={`round ${checked === true ? styles.lineThrougt : ''}`}> 
+            {tasks.taskName}
+          </span>
+          
       
-      <div className={styles.task} >
-          <button className={styles.checkContainer}>
-            <div/>
+          <button
+            className={styles.deleteButton}
+            onClick={() => {
+              deleteTask(tasks.identify);
+            }}>
+            <TbTrash size={20} className={styles.icone} />
           </button>
-          <span> {tasks.taskName}</span>
 
-        <button 
-        className={ styles.deleteButton} 
-        onClick={() => {deleteTask(tasks.taskName);
-        }}>
-
-          <TbTrash size={20} className={styles.icone}/>
-        </button>
       </div>
-    </div>
-
-  </section>
-
-
-    
-  )
-}
+    </section>
+  );
+};
 
 export default Atividade;
